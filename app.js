@@ -6,9 +6,18 @@ const lineConfig = {
     channelSecret: process.env.LINE_CHANNEL_SECRET
 };
 
+const bot = new line.Client(lineConfig);
+
 server.listen(process.env.PORT || 3000);
 
 server.post('/bot/webhook', line.middleware(lineConfig), (req, res) => {
     res.sendStatus(200);
-    console.log(req.body);
+    req.body.events.forEach((ev) => {
+        if (ev.type === 'message' && ev.message.type === 'text') {
+            bot.replyMessage(ev.replyToken, {
+                type: 'text',
+                text: ev.message.text
+            });
+        }
+    });
 });
