@@ -14,10 +14,19 @@ server.post('/bot/webhook', line.middleware(lineConfig), (req, res) => {
     res.sendStatus(200);
     req.body.events.forEach((ev) => {
         if (ev.type === 'message' && ev.message.type === 'text') {
-            bot.replyMessage(ev.replyToken, {
-                type: 'text',
-                text: ev.message.text
-            });
+            if (ev.message.text.indexOf('今何時') !== -1) {
+                const dt = new Date();
+                const now = dt.getHours() + ':' + dt.getMinutes();
+                bot.replyMessage(ev.replyToken, {
+                    type: 'text',
+                    text: now
+                });
+            } else {
+                bot.replyMessage(ev.replyToken, {
+                    type: 'text',
+                    text: ev.message.text
+                });
+            }
         }
     });
 });
