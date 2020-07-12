@@ -32,7 +32,7 @@ class Markov {
         }
     }
     sample(word) {
-        const words = this.data[word];
+        let words = this.data[word];
         if (words === undefined) { words = []; }
         return words[Math.floor(Math.random() * words.length)];
     }
