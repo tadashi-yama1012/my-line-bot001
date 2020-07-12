@@ -16,7 +16,7 @@ server.post('/bot/webhook', line.middleware(lineConfig), (req, res) => {
         if (ev.type === 'message' && ev.message.type === 'text') {
             if (ev.message.text.indexOf('今何時') !== -1) {
                 const dt = new Date();
-                const now = dt.getHours() + ':' + dt.getMinutes();
+                const now = (dt.getHours() + 9) + ':' + dt.getMinutes();
                 bot.replyMessage(ev.replyToken, {
                     type: 'text',
                     text: now
