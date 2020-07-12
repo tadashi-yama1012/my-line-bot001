@@ -1,3 +1,5 @@
+const fs = require('fs');
+const kuromoji = require('kuromoji');
 const server = require('express')();
 const line = require('@line/bot-sdk');
 
@@ -8,25 +10,67 @@ const lineConfig = {
 
 const bot = new line.Client(lineConfig);
 
+const builder = kuromoji.builder({
+    dicPath: 'node_modules/kuromoji/dist/dict'
+});
+
+class Markov {
+    constructor() {
+        this.data = {};
+    }
+    add(words) {
+        for (let i = 0; i <= words.length; i += 1) {
+            const now = words[i];
+            if (now === undefined) { now = null; }
+            const prev = words[i - 1];
+            if (prev === undefined) { prev = null; }
+            if (this.data[prev] === undefined) {
+                this.data[prev] = [];
+            }
+            this.data[prev].push(now);
+        }
+    }
+    sample(word) {
+        const words = this.data[word];
+        if (words === undefined) { words = []; }
+        return words[Math.floor(Math.random() * words.length)];
+    }
+    make() {
+        let sentence = [];
+        const word = this.sample(null);
+        while (word) {
+            sentence.push(word);
+            word = this.sample(word);
+        }
+        return sentence.join('');
+    }
+}
+
+function myBuilder(text) {
+    return new Promise((resolve, reject) => {
+        const markov = new Markov();
+        builder.build((err, tokeneizer) => {
+            if (err) reject(err);
+            const tokens = tokeneizer.tokenize(text);
+            const words = tokens.map((token) => token.surface_form);
+            markov.add(words);
+            resolve(markov.make());
+        })
+    });
+}
+
 server.listen(process.env.PORT || 3000);
 
 server.post('/bot/webhook', line.middleware(lineConfig), (req, res) => {
     res.sendStatus(200);
     req.body.events.forEach((ev) => {
         if (ev.type === 'message' && ev.message.type === 'text') {
-            if (ev.message.text.indexOf('今何時') !== -1) {
-                const dt = new Date();
-                const now = (dt.getHours() + 9) + ':' + dt.getMinutes();
+            myBuilder(ev.message.text).then((resp) => {
                 bot.replyMessage(ev.replyToken, {
                     type: 'text',
-                    text: now
+                    text: resp
                 });
-            } else {
-                bot.replyMessage(ev.replyToken, {
-                    type: 'text',
-                    text: ev.message.text
-                });
-            }
+            });
         }
     });
 });
