@@ -39,6 +39,7 @@ class Markov {
         let sentence = [];
         let word = this.sample(null);
         while (word) {
+            console.log(word);
             sentence.push(word);
             word = this.sample(word);
         }
