@@ -19,6 +19,7 @@ class Markov {
         this.data = {};
     }
     add(words) {
+        console.log(words);
         for (let i = 0; i <= words.length; i += 1) {
             let now = words[i];
             if (now === undefined) { now = null; }
@@ -39,7 +40,6 @@ class Markov {
         let sentence = [];
         let word = this.sample(null);
         while (word) {
-            console.log(word);
             sentence.push(word);
             word = this.sample(word);
         }
