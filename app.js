@@ -37,7 +37,7 @@ class Markov {
     }
     make() {
         let sentence = [];
-        const word = this.sample(null);
+        let word = this.sample(null);
         while (word) {
             sentence.push(word);
             word = this.sample(word);
