@@ -20,9 +20,9 @@ class Markov {
     }
     add(words) {
         for (let i = 0; i <= words.length; i += 1) {
-            const now = words[i];
+            let now = words[i];
             if (now === undefined) { now = null; }
-            const prev = words[i - 1];
+            let prev = words[i - 1];
             if (prev === undefined) { prev = null; }
             if (this.data[prev] === undefined) {
                 this.data[prev] = [];
