@@ -57,6 +57,8 @@ function myBuilder(text) {
             const tokens = tokeneizer.tokenize(text);
             const words = tokens.map((token) => token.surface_form);
             markov.add(words);
+            markov.add(words);
+            markov.add(words);
             const results = [markov.make(), markov.make(), markov.make()];
             console.log(results);
             resolve(results[0]);
