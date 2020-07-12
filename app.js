@@ -11,7 +11,7 @@ const lineConfig = {
 const bot = new line.Client(lineConfig);
 
 const builder = kuromoji.builder({
-    dicPath: 'node_modules/kuromoji/dist/dict'
+    dicPath: __dirname + '/node_modules/kuromoji/dist/dict'
 });
 
 class Markov {
