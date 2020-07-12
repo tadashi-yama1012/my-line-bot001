@@ -15,11 +15,10 @@ const builder = kuromoji.builder({
 });
 
 class Markov {
-    constructor() {
-        this.data = {};
+    constructor(data = {}) {
+        this.data = data;
     }
     add(words) {
-        console.log(words);
         for (let i = 0; i <= words.length; i += 1) {
             let now = words[i];
             if (now === undefined) { now = null; }
@@ -33,7 +32,6 @@ class Markov {
     }
     sample(word) {
         let words = this.data[word];
-        console.log(words);
         if (words === undefined) { words = []; }
         return words[Math.floor(Math.random() * words.length)];
     }
@@ -49,19 +47,18 @@ class Markov {
 }
 
 function myBuilder(text) {
-    console.log(text);
     return new Promise((resolve, reject) => {
-        const markov = new Markov();
+        const dataFile = fs.readFileSync(__dirname + '/data.json', 'utf-8');
+        const data = JSON.parse(dataFile.toString()) || {};
+        console.log(data);
+        const markov = new Markov(data);
         builder.build((err, tokeneizer) => {
             if (err) reject(err);
             const tokens = tokeneizer.tokenize(text);
             const words = tokens.map((token) => token.surface_form);
             markov.add(words);
-            markov.add(words);
-            markov.add(words);
-            const results = [markov.make(), markov.make(), markov.make()];
-            console.log(results);
-            resolve(results[0]);
+            fs.writeFileSync(__dirname + '/data.json', JSON.stringify(markov.data));
+            resolve(markov.make());
         });
     });
 }
