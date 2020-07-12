@@ -70,6 +70,8 @@ server.post('/bot/webhook', line.middleware(lineConfig), (req, res) => {
                     type: 'text',
                     text: resp
                 });
+            }).catch((err) => {
+                console.error(err);
             });
         }
     });
