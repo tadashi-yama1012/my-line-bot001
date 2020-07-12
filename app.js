@@ -47,6 +47,7 @@ class Markov {
 }
 
 function myBuilder(text) {
+    console.log(text);
     return new Promise((resolve, reject) => {
         const markov = new Markov();
         builder.build((err, tokeneizer) => {
@@ -55,7 +56,7 @@ function myBuilder(text) {
             const words = tokens.map((token) => token.surface_form);
             markov.add(words);
             resolve(markov.make());
-        })
+        });
     });
 }
 
